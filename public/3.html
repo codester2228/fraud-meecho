@@ -346,34 +346,49 @@
         otpStep.classList.remove('hidden');
     }
 
-    const submitToBackend = () => {
-        const phone = phoneInput.value;
-        const otp = otpInput.value;
-        
-        const apiUrl = '/api/submit-referral'; 
+// Replace the submitToBackend function with this improved version:
+const submitToBackend = () => {
+    const phone = phoneInput.value;
+    const otp = otpInput.value;
+    
+    messageDiv.textContent = "Submitting...";
+    messageDiv.className = 'message';
+    otpStep.querySelector('button').disabled = true;
 
-        fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ phone, otp }),
-        })
-        .then(response => response.json())
-        .then(result => {
-            if(result.success){
-                 console.log("Form data submitted to backend successfully.");
-            } else {
-                 console.error("Backend submission failed:", result.error);
-            }
-        })
-        .catch((error) => {
-            console.error("Error submitting form data to backend:", error);
-        })
-        .finally(() => {
-            messageDiv.textContent = "";
-            otpStep.classList.add('hidden');
-            itineraryStep.classList.remove('hidden');
-        });
-    };
+    const apiUrl = '/api/submit-referral'; 
+
+    fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, otp }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(result => {
+        if(result.success){
+            messageDiv.textContent = "Verification successful!";
+            messageDiv.className = 'message success';
+            console.log("Form data submitted to backend successfully.");
+        } else {
+            throw new Error(result.error || 'Unknown error occurred');
+        }
+    })
+    .catch((error) => {
+        console.error("Error submitting form data to backend:", error);
+        messageDiv.textContent = "Verification failed. Please try again.";
+        messageDiv.className = 'message error';
+        otpStep.querySelector('button').disabled = false;
+        return; // Don't proceed to next step
+    })
+    .finally(() => {
+        otpStep.querySelector('button').disabled = false;
+    });
+   
+};
 
     function verifyOTP() {
         const otp = otpInput.value;
