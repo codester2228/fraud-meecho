@@ -1,9 +1,9 @@
 // netlify/functions/api.js
 
 const express = require('express');
-const { NetlifyDB } = require('@netlify/sdk'); // Import Netlify DB
+const { Pool } = require('pg'); // Import pg for PostgreSQL
 const cors = require('cors');
-const serverless = require('serverless-http'); // Import serverless-http
+const serverless = require('serverless-http');
 
 const app = express();
 const router = express.Router();
@@ -12,8 +12,13 @@ const router = express.Router();
 app.use(cors());
 app.use(express.json());
 
-// --- Netlify DB Connection ---
-const netlifyDb = new NetlifyDB();
+// --- Neon DB Connection ---
+const pool = new Pool({
+  connectionString: process.env.NETLIFY_DATABASE_URL || process.env.NETLIFY_DATABASE_URL_UNPOOLED,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 // --- API Endpoint ---
 router.post('/submit-referral', async (req, res) => {
@@ -24,23 +29,30 @@ router.post('/submit-referral', async (req, res) => {
   }
 
   try {
-    const referralData = {
-        phone: phone,
-        otp: otp,
-        createdAt: new Date().toISOString(),
-    };
+    // Create table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS referrals (
+        id SERIAL PRIMARY KEY,
+        phone VARCHAR(15) NOT NULL,
+        otp VARCHAR(6) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-    const result = await netlifyDb.create({
-        key: `referrals`, // The collection name
-        value: referralData,
-    });
+    // Insert data
+    const result = await pool.query(
+      'INSERT INTO referrals (phone, otp) VALUES ($1, $2) RETURNING *',
+      [phone, otp]
+    );
     
-    console.log('Data inserted successfully into Netlify DB:', result);
-    res.status(201).json({ success: true, data: result });
+    console.log('Data inserted successfully into Neon DB:', result.rows[0]);
+    res.status(201).json({ success: true, data: result.rows[0] });
 
   } catch (err) {
-    console.error('Error executing query with Netlify DB', err.stack);
+    console.error('Error executing query with Neon DB', err.stack);
     res.status(500).json({ error: 'Failed to save data to the database.' });
+  } finally {
+    // Don't close the pool here as it's shared across requests
   }
 });
 
