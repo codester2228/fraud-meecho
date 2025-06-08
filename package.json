@@ -1,0 +1,17 @@
+{
+  "name": "meesho-prank-site",
+  "version": "1.0.0",
+  "description": "A prank site with a Netlify Function backend.",
+  "main": "index.js",
+  "scripts": {
+    "start": "netlify dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@netlify/sdk": "^1.0.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "serverless-http": "^3.2.0"
+  }
+}
